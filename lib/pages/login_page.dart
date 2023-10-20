@@ -21,18 +21,18 @@ class _LoginPageState extends State<LoginPage> {
       body: SafeArea(
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 70.0),
+            padding: const EdgeInsets.symmetric(horizontal: 50.0),
             child: Column(
               children: [
                 const SizedBox(height: 30.0),
                 const Image(
-                  image: AssetImage("../assets/icon.png"),
+                  image: AssetImage("assets/icon.png"),
                   width: 256,
                   height: 256,
                 ),
                 const Text("Welcome", style:
                   TextStyle(
-                    fontSize: 64,
+                    fontSize: 48,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   )
@@ -64,12 +64,18 @@ class _LoginPageState extends State<LoginPage> {
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Not a member?"),
+                    Text(
+                      "Not a member?",
+                      style: TextStyle(
+                        fontSize: 16,
+                      )
+                    ),
                     SizedBox(width: 4),
                     Text(
                       'Register now',
                       style: TextStyle(
-                        fontWeight: FontWeight.bold
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
                       ),
                     )
                   ],
