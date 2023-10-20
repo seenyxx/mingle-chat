@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:minglechat/components/login_button.dart';
 import 'package:minglechat/components/login_text_field.dart'; 
 
@@ -28,10 +27,16 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 30.0),
                 const Image(
                   image: AssetImage('../assets/icon.png'),
-                  width: 300,
-                  height: 300,
+                  width: 256,
+                  height: 256,
                 ),
-                const Text("Welcome", style:TextStyle(fontSize: 64, color: Colors.white)),
+                const Text("Welcome", style:
+                  TextStyle(
+                    fontSize: 64,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  )
+                ),
                 const SizedBox(height: 30.0),
 
                 // Email Input
