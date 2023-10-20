@@ -24,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
             padding: const EdgeInsets.symmetric(horizontal: 50.0),
             child: Column(
               children: [
-                const SizedBox(height: 30.0),
+                const SizedBox(height: 80.0),
                 const Image(
                   image: AssetImage("assets/icon.png"),
                   width: 256,
