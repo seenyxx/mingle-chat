@@ -24,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
             padding: const EdgeInsets.symmetric(horizontal: 50.0),
             child: Column(
               children: [
-                const SizedBox(height: 80.0),
+                const SizedBox(height: 50.0),
                 const Image(
                   image: AssetImage("assets/icon.png"),
                   width: 256,
@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
                     fontWeight: FontWeight.bold,
                   )
                 ),
-                const SizedBox(height: 30.0),
+                const SizedBox(height: 20.0),
 
                 // Email Input
                 LoginTextField(
@@ -46,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
                   obscureText: false
                 ),
 
-                const SizedBox(height: 30.0),
+                const SizedBox(height: 20.0),
 
                 // Password Input
                 LoginTextField(
@@ -55,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
                   obscureText: true
                 ),
 
-                const SizedBox(height: 30.0),
+                const SizedBox(height: 20.0),
                 // Sign in button
                 LoginButton(onTap: (){}, text: "Sign In"),
 
