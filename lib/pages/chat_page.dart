@@ -30,16 +30,16 @@ class _ChatPageState extends State<ChatPage> {
 
 
   void sendMessage() async {
+    if(_messageController.text.isNotEmpty) {
+      await _chatService.sendMessage(widget.receiverUserID, _messageController.text);
+      _messageController.clear();
+    }
+
     _scrollController.animateTo(
       _scrollController.position.minScrollExtent,
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeInOut,
     );
-
-    if(_messageController.text.isNotEmpty) {
-      await _chatService.sendMessage(widget.receiverUserID, _messageController.text);
-      _messageController.clear();
-    }
   }
 
   @override
@@ -89,6 +89,7 @@ class _ChatPageState extends State<ChatPage> {
           controller: _scrollController,
           shrinkWrap: true,
           reverse: true,
+          sort: false,
           padding: const EdgeInsetsDirectional.symmetric(horizontal: 12.0),
           elements: messages,
           groupBy: (message) => DateTime(
@@ -96,7 +97,6 @@ class _ChatPageState extends State<ChatPage> {
             (message['timestamp'] as Timestamp).toDate().month,
             (message['timestamp'] as Timestamp).toDate().day,
             (message['timestamp'] as Timestamp).toDate().hour,
-          
           ), 
           groupHeaderBuilder: (Map<String, dynamic> message) => SizedBox(
             height: 35,
