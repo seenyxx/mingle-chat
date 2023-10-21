@@ -33,7 +33,22 @@ class MyApp extends StatelessWidget {
           Theme.of(context).textTheme,
         ).apply(
           bodyColor: Colors.white
-        )
+        ),
+        appBarTheme: const AppBarTheme(
+          toolbarHeight: 80,
+          titleTextStyle: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold
+          ),
+          backgroundColor: Color(0xFF120D1E),
+          foregroundColor: Colors.white,
+          shape: Border(
+            bottom: BorderSide(
+              color: Color(0xFF21212F),
+              width: 4
+            )
+          )
+        ),
       ),
     );
   }

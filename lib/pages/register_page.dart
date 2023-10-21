@@ -40,85 +40,87 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50.0),
-            child: Column(
-              children: [
-                const SizedBox(height: 50.0),
-                const Image(
-                  image: AssetImage("assets/icon.png"),
-                  width: 256,
-                  height: 256,
-                ),
-                const Text("Create Account", style:
-                  TextStyle(
-                    fontSize: 32,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  )
-                ),
-                const SizedBox(height: 20.0),
-
-                // Email Input
-                LoginTextField(
-                  controller: emailController,
-                  hintText: 'Email',
-                  obscureText: false
-                ),
-
-                const SizedBox(height: 20.0),
-
-                // Password Input
-                LoginTextField(
-                  controller: passwordController,
-                  hintText: 'Password',
-                  obscureText: true
-                ),
-
-                const SizedBox(height: 20.0),
-                
-                // Confirm Password Input
-                LoginTextField(
-                  controller: confirmPasswordController,
-                  hintText: 'Confirm password',
-                  obscureText: true
-                ),
-
-                const SizedBox(height: 20.0),
-
-                // Sign up button
-                LoginButton(onTap: signUp, text: "Sign Up"),
-
-                const SizedBox(height: 20.0),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Already a member?",
-                      style: TextStyle(
-                        fontSize: 16,
-                      )
-                    ),
-                    const SizedBox(width: 4),
-                    GestureDetector(
-                      onTap: widget.onTap,
-                      child: const Text(
-                        'Login now',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50.0),
+              child: Column(
+                children: [
+                  const SizedBox(height: 50.0),
+                  const Image(
+                    image: AssetImage("assets/icon.png"),
+                    width: 192,
+                    height: 192,
+                  ),
+                  const Text("Create Account", style:
+                    TextStyle(
+                      fontSize: 42,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
                     )
-                  ],
-                )
-              ],
+                  ),
+                  const SizedBox(height: 20.0),
+      
+                  // Email Input
+                  LoginTextField(
+                    controller: emailController,
+                    hintText: 'Email',
+                    obscureText: false
+                  ),
+      
+                  const SizedBox(height: 20.0),
+      
+                  // Password Input
+                  LoginTextField(
+                    controller: passwordController,
+                    hintText: 'Password',
+                    obscureText: true
+                  ),
+      
+                  const SizedBox(height: 20.0),
+                  
+                  // Confirm Password Input
+                  LoginTextField(
+                    controller: confirmPasswordController,
+                    hintText: 'Confirm password',
+                    obscureText: true
+                  ),
+      
+                  const SizedBox(height: 20.0),
+      
+                  // Sign up button
+                  LoginButton(onTap: signUp, text: "Sign Up"),
+      
+                  const SizedBox(height: 20.0),
+      
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Already a member?",
+                        style: TextStyle(
+                          fontSize: 16,
+                        )
+                      ),
+                      const SizedBox(width: 4),
+                      GestureDetector(
+                        onTap: widget.onTap,
+                        child: const Text(
+                          'Login now',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ),
             ),
-          ),
-      )
+        )
+        ),
       ) 
     );
   }
