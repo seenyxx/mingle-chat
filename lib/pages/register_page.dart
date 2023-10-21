@@ -2,27 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:minglechat/components/login_button.dart';
 import 'package:minglechat/components/login_text_field.dart';
 import 'package:minglechat/services/auth/auth_service.dart';
-import 'package:provider/provider.dart'; 
+import 'package:provider/provider.dart';
 
-class LoginPage extends StatefulWidget {
+
+class RegisterPage extends StatefulWidget {
   final void Function()? onTap;
-  const LoginPage({super.key, required this.onTap});
+  const RegisterPage({super.key,  required this.onTap});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-
+class _RegisterPageState extends State<RegisterPage> {
+  
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
-  // Sign in
-  void signIn() async {
+  // Sign up 
+  void signUp() async {
+    if (passwordController.text != confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Passwords do not match.")));
+      return;
+    }
+
     final authService = Provider.of<AuthService>(context, listen: false);
-
+    
     try {
-      await authService.signInWithEmailandPassword(emailController.text, passwordController.text);
+      await authService.signUpWithEmailandPassword(emailController.text, passwordController.text);
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
@@ -45,9 +52,9 @@ class _LoginPageState extends State<LoginPage> {
                   width: 256,
                   height: 256,
                 ),
-                const Text("Welcome", style:
+                const Text("Create Account", style:
                   TextStyle(
-                    fontSize: 48,
+                    fontSize: 32,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   )
@@ -71,8 +78,18 @@ class _LoginPageState extends State<LoginPage> {
                 ),
 
                 const SizedBox(height: 20.0),
-                // Sign in button
-                LoginButton(onTap: signIn, text: "Sign In"),
+                
+                // Confirm Password Input
+                LoginTextField(
+                  controller: confirmPasswordController,
+                  hintText: 'Confirm password',
+                  obscureText: true
+                ),
+
+                const SizedBox(height: 20.0),
+
+                // Sign up button
+                LoginButton(onTap: signUp, text: "Sign Up"),
 
                 const SizedBox(height: 20.0),
 
@@ -80,7 +97,7 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text(
-                      "Not a member?",
+                      "Already a member?",
                       style: TextStyle(
                         fontSize: 16,
                       )
@@ -89,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
                     GestureDetector(
                       onTap: widget.onTap,
                       child: const Text(
-                        'Register now',
+                        'Login now',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,

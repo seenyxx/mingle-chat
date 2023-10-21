@@ -1,10 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:minglechat/firebase_options.dart';
+import 'package:minglechat/services/auth/auth_gate.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:minglechat/services/auth/auth_service.dart';
+import 'package:provider/provider.dart';
 
-import 'pages/login_page.dart';
-
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => AuthService(),
+      child: const MyApp(),
+    )
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -14,8 +26,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const LoginPage(),
+      home: const AuthGate(),
       theme: ThemeData(
+        scaffoldBackgroundColor: const Color(0xFF120D1E),
         textTheme: GoogleFonts.nunitoSansTextTheme(
           Theme.of(context).textTheme,
         ).apply(
