@@ -55,7 +55,7 @@ class _MessageTextFieldState extends State<MessageTextField> {
           padding: const EdgeInsets.only(right: 10),
           child: CircleAvatar(
             radius: 5,
-            backgroundColor: widget.controller.text.isEmpty ? Colors.transparent : Colors.blue,
+            backgroundColor: widget.controller.text.trim().isEmpty ? Colors.transparent : Colors.blue,
             child: IconButton(
               focusColor: Colors.transparent,
               highlightColor: Colors.transparent,

@@ -40,15 +40,23 @@ class _HomePageState extends State<HomePage> {
           ]
         ),
         actions: [
+          // Friends list
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.people_alt_rounded),
+            splashRadius: 18,
+          ),
           // User settings
           IconButton(
             onPressed: () {},
-            icon: const Icon(Icons.account_circle),
+            icon: const Icon(Icons.account_circle_rounded),
+            splashRadius: 18,
           ),
           // Sign out
           IconButton(
             onPressed: signOut,
-            icon: const Icon(Icons.logout),
+            icon: const Icon(Icons.logout_rounded),
+            splashRadius: 18,
           )
         ],
       ),
@@ -68,21 +76,15 @@ class _HomePageState extends State<HomePage> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // Skeleton loader
           return ListView.separated(
-            padding: const EdgeInsets.symmetric(vertical: 20),
+            padding: const EdgeInsets.symmetric(vertical: 10),
             separatorBuilder: (context, index) => const SizedBox(height: 30,),
             itemCount: 5,
             itemBuilder: (context, index) => const DirectMessagesSkeleton()
           );
         }
 
-        // return ListView(
-        //   children: snapshot.data!.docs
-        //     .map<Widget>((doc) => _buildUserListItem(doc))
-        //     .toList(),
-        // );
-
         return ListView.separated(
-          padding: const EdgeInsets.symmetric(vertical: 20),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           itemCount: snapshot.data!.docs.length,
           itemBuilder: (context, index) => _buildUserListItem(snapshot.data!.docs[index]),
           separatorBuilder: (context, index) => const SizedBox(height: 30),
@@ -96,6 +98,7 @@ class _HomePageState extends State<HomePage> {
 
     if (_auth.currentUser!.email != data['email']) {
       return ListTile(
+        contentPadding: const EdgeInsets.all(15),
         leading: const CircleAvatar(
           radius: 25,
           backgroundColor: Colors.grey

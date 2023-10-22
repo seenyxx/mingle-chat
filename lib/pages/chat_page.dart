@@ -32,7 +32,7 @@ class _ChatPageState extends State<ChatPage> {
 
 
   void sendMessage() async {
-    if(_messageController.text.isNotEmpty) {
+    if(_messageController.text.trim().isNotEmpty) {
       await _chatService.sendMessage(widget.receiverUserID, _messageController.text.trim());
       _messageController.clear();
 
@@ -68,7 +68,7 @@ class _ChatPageState extends State<ChatPage> {
           highlightColor: Colors.transparent,
           splashRadius: 20,
           onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded),
         ),
         title: Row(
           children: [
@@ -185,7 +185,7 @@ class _ChatPageState extends State<ChatPage> {
                   ),
                 ),
               ),
-              ChatBubble(message: data['message'], isSender: isSender),
+              ChatBubble(message: data['message'], isSender: isSender, uid: data['uid']),
               Container(
                 padding: EdgeInsets.only(left: isSender ? 0 : 10, right: isSender ? 10 : 0),
                 child: Align(

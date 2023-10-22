@@ -14,8 +14,10 @@ class ChatService extends ChangeNotifier {
     final String currentUserId = _firebaseAuth.currentUser!.uid;
     final String currentUserEmail = _firebaseAuth.currentUser!.email.toString();
     final Timestamp timestamp = Timestamp.now();
+    final String msgUid = [timestamp.millisecondsSinceEpoch.toString(), receiverId, currentUserId].join('_');
 
     Message newMessage = Message(
+      uid: msgUid,
       senderId: currentUserId,
       senderEmail: currentUserEmail,
       receiverId: receiverId,
@@ -32,7 +34,8 @@ class ChatService extends ChangeNotifier {
       .collection('chat_rooms')
       .doc(chatRoomId)
       .collection('messages')
-      .add(newMessage.toMap());
+      .doc(newMessage.uid)
+      .set(newMessage.toMap());
   }
 
   // Retrieve messages

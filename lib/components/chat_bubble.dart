@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 class ChatBubble extends StatelessWidget {
   final String message;
   final bool isSender;
+  final String uid;
 
   static LinearGradient senderGradient = const LinearGradient(
     begin: Alignment.bottomLeft,
@@ -32,7 +33,7 @@ class ChatBubble extends StatelessWidget {
     ]
   );
 
-  const ChatBubble({super.key, required this.message, required this.isSender});
+  const ChatBubble({super.key, required this.message, required this.isSender, required this.uid});
 
 
   @override
@@ -61,7 +62,7 @@ class ChatBubble extends StatelessWidget {
             top: -28,
             right: isSender ? -18 : null,
             left: isSender ? null : -18,
-            child: CircleAvatar(radius: 20, backgroundColor: Colors.red,)
+            child: const CircleAvatar(radius: 20, backgroundColor: Colors.red,)
           ),
         ]
       ),

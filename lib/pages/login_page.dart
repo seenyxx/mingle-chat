@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:minglechat/components/login_button.dart';
 import 'package:minglechat/components/login_text_field.dart';
 import 'package:minglechat/services/auth/auth_service.dart';
@@ -16,6 +19,8 @@ class _LoginPageState extends State<LoginPage> {
 
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final scrollController = ScrollController();
+  late StreamSubscription<bool> keyboardSubscription;
 
   // Sign in
   void signIn() async {
@@ -31,10 +36,33 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    
+    var kbVisibilityController = KeyboardVisibilityController();
+    keyboardSubscription = kbVisibilityController.onChange.listen((bool visible) {
+      if (visible && scrollController.hasClients) {
+        scrollController.animateTo(
+          scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    keyboardSubscription.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
+        controller: scrollController,
         child: SafeArea(
           child: Center(
             child: Padding(
