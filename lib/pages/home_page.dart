@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:minglechat/components/dm_skeleton.dart';
 import 'package:minglechat/pages/chat_page.dart';
 import 'package:minglechat/services/auth/auth_service.dart';
 import 'package:provider/provider.dart';
@@ -26,7 +27,18 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Messages'),
+        title: const Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(right: 16),
+              child: CircleAvatar(radius: 20, backgroundColor: Colors.grey)
+            ),
+            Text(
+              'Messages',
+              style: TextStyle(fontSize: 24),
+            ),
+          ]
+        ),
         actions: [
           // User settings
           IconButton(
@@ -54,13 +66,26 @@ class _HomePageState extends State<HomePage> {
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text('Loading...');
+          // Skeleton loader
+          return ListView.separated(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            separatorBuilder: (context, index) => const SizedBox(height: 30,),
+            itemCount: 5,
+            itemBuilder: (context, index) => const DirectMessagesSkeleton()
+          );
         }
 
-        return ListView(
-          children: snapshot.data!.docs
-            .map<Widget>((doc) => _buildUserListItem(doc))
-            .toList(),
+        // return ListView(
+        //   children: snapshot.data!.docs
+        //     .map<Widget>((doc) => _buildUserListItem(doc))
+        //     .toList(),
+        // );
+
+        return ListView.separated(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          itemCount: snapshot.data!.docs.length,
+          itemBuilder: (context, index) => _buildUserListItem(snapshot.data!.docs[index]),
+          separatorBuilder: (context, index) => const SizedBox(height: 30),
         );
       },
     );
@@ -71,6 +96,10 @@ class _HomePageState extends State<HomePage> {
 
     if (_auth.currentUser!.email != data['email']) {
       return ListTile(
+        leading: const CircleAvatar(
+          radius: 25,
+          backgroundColor: Colors.grey
+        ),
         title: Text(data['email']),
         onTap: () {
           Navigator.push(

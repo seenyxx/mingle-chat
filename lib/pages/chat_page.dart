@@ -1,10 +1,12 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
 import 'package:minglechat/components/chat_bubble.dart';
-import 'package:minglechat/components/login_text_field.dart';
+import 'package:minglechat/components/message_text_field.dart';
 import 'package:minglechat/services/chat/chat_service.dart';
 
 class ChatPage extends StatefulWidget {
@@ -31,24 +33,54 @@ class _ChatPageState extends State<ChatPage> {
 
   void sendMessage() async {
     if(_messageController.text.isNotEmpty) {
-      await _chatService.sendMessage(widget.receiverUserID, _messageController.text);
+      await _chatService.sendMessage(widget.receiverUserID, _messageController.text.trim());
       _messageController.clear();
-    }
 
-    _scrollController.animateTo(
-      _scrollController.position.minScrollExtent,
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeInOut,
-    );
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.minScrollExtent,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+        );
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          widget.receiverUserEmail,
-          style: const TextStyle(fontSize: 18),
+        elevation: 0,
+        backgroundColor: const Color(0x11120D1E),
+        shape: const Border(
+          bottom: BorderSide(
+            color: Color(0x8821212F),
+            width: 4
+          )
+        ),
+        flexibleSpace: ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+            child: Container(color: Colors.transparent),
+          )
+        ),
+        leading: IconButton(
+          highlightColor: Colors.transparent,
+          splashRadius: 20,
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back_ios),
+        ),
+        title: Row(
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(right: 16),
+              child: CircleAvatar(radius: 20, backgroundColor: Colors.grey)
+            ),
+            Text(
+              widget.receiverUserEmail,
+              style: const TextStyle(fontSize: 18),
+            ),
+          ]
         )
       ),
       body: Column(
@@ -75,7 +107,7 @@ class _ChatPageState extends State<ChatPage> {
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text('Loading...');
+          return const Center(child: CircularProgressIndicator());
         }
         var messages = snapshot.data!.docs.map((document) => document.data() as Map<String, dynamic>).toList();
         
@@ -126,6 +158,7 @@ class _ChatPageState extends State<ChatPage> {
       ? Alignment.centerRight
       : Alignment.centerLeft;
 
+    bool isSender = data['senderId'] == _firebaseAuth.currentUser!.uid;
     // DateTime timestampDate = (data['timestamp'] as Timestamp).toDate();
 
     return Row(
@@ -138,23 +171,33 @@ class _ChatPageState extends State<ChatPage> {
           child: Column(
             crossAxisAlignment: (data['senderId'] == _firebaseAuth.currentUser!.uid) ? CrossAxisAlignment.end : CrossAxisAlignment.start,
             children: [
-              Text(
-                data['senderEmail'],
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Color(0xFFAAAAAA),
-                  fontWeight: FontWeight.bold,
+              Container(
+                padding: EdgeInsets.only(left: isSender ? 0 : 34, right: isSender ? 34 : 0),
+                child: Align(
+                  alignment: alignment,
+                  child: Text(
+                    data['senderEmail'],
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFFAAAAAA),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
-              const SizedBox(height: 5),
-              ChatBubble(message: data['message'], isSender: data['senderId'] == _firebaseAuth.currentUser!.uid),
-              const SizedBox(height: 5),
-              Text(
-                DateFormat.jm().format((data['timestamp'] as Timestamp).toDate()),
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Color(0xFFAAAAAA),
-                  fontWeight: FontWeight.bold,
+              ChatBubble(message: data['message'], isSender: isSender),
+              Container(
+                padding: EdgeInsets.only(left: isSender ? 0 : 10, right: isSender ? 10 : 0),
+                child: Align(
+                  alignment: alignment,
+                  child: Text(
+                    DateFormat.jm().format((data['timestamp'] as Timestamp).toDate()),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFFAAAAAA),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -166,24 +209,26 @@ class _ChatPageState extends State<ChatPage> {
 
   // Build message input
   Widget _buildMessageInput() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Row(
-        children: [
-          Expanded(
-            child: LoginTextField(
-              controller: _messageController,
-              hintText: 'Message',
-              obscureText: false,
-            )
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: MessageTextField(
+                    controller: _messageController,
+                    hintText: 'Message',
+                    submitAction: sendMessage,
+                  )
+                ),
+              ],
+            ),
           ),
-    
-          IconButton(
-            onPressed: sendMessage,
-            color: Colors.white,
-            icon: const Icon(Icons.send, size: 40)
-          )
-        ],
+        ),
       ),
     );
   }

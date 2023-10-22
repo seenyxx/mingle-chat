@@ -37,20 +37,34 @@ class ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        gradient: isSender ? senderGradient : receiverGradient
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              gradient: isSender ? senderGradient : receiverGradient
+            ),
+            child: Text(
+              message,
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+                fontWeight: FontWeight.normal
+              ),
+            )
+          ), 
+          Positioned(
+            top: -28,
+            right: isSender ? -18 : null,
+            left: isSender ? null : -18,
+            child: CircleAvatar(radius: 20, backgroundColor: Colors.red,)
+          ),
+        ]
       ),
-      child: Text(
-        message,
-        style: const TextStyle(
-          color: Colors.black,
-          fontSize: 16,
-          fontWeight: FontWeight.normal
-        ),
-      )
     );
   }
 }

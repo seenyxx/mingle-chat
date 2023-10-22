@@ -28,6 +28,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: const AuthGate(),
       theme: ThemeData(
+        progressIndicatorTheme: const ProgressIndicatorThemeData(
+          circularTrackColor: Color(0xFF21212F),
+          color: Color(0xFF343449)
+        ),
         scaffoldBackgroundColor: const Color(0xFF120D1E),
         textTheme: GoogleFonts.nunitoSansTextTheme(
           Theme.of(context).textTheme,
