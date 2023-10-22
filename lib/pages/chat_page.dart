@@ -49,9 +49,10 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: const Color(0x11120D1E),
+        backgroundColor: const Color(0xBB120D1E),
         shape: const Border(
           bottom: BorderSide(
             color: Color(0x8821212F),
@@ -60,7 +61,7 @@ class _ChatPageState extends State<ChatPage> {
         ),
         flexibleSpace: ClipRect(
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+            filter: ImageFilter.blur(sigmaX: 7, sigmaY: 7),
             child: Container(color: Colors.transparent),
           )
         ),
@@ -211,7 +212,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget _buildMessageInput() {
     return ClipRect(
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        filter: ImageFilter.blur(sigmaX: 7, sigmaY: 7),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Padding(
