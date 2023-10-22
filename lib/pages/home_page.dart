@@ -64,6 +64,15 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget _buildSkeletonLoader() {
+    return ListView.separated(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      separatorBuilder: (context, index) => const SizedBox(height: 30,),
+      itemCount: 5,
+      itemBuilder: (context, index) => const DirectMessagesSkeleton()
+    );
+  }
+
   // Build list of users
   Widget _buildUserList() {
     return StreamBuilder<QuerySnapshot>(
@@ -75,12 +84,7 @@ class _HomePageState extends State<HomePage> {
 
         if (snapshot.connectionState == ConnectionState.waiting) {
           // Skeleton loader
-          return ListView.separated(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            separatorBuilder: (context, index) => const SizedBox(height: 30,),
-            itemCount: 5,
-            itemBuilder: (context, index) => const DirectMessagesSkeleton()
-          );
+          return _buildSkeletonLoader();
         }
 
         return ListView.separated(
@@ -117,7 +121,7 @@ class _HomePageState extends State<HomePage> {
         },
       );
     } else {
-      return Container();
+      return const SizedBox.shrink();
     }
   }
 }

@@ -34,7 +34,6 @@ class _ChatPageState extends State<ChatPage> {
   void sendMessage() async {
     if(_messageController.text.trim().isNotEmpty) {
       await _chatService.sendMessage(widget.receiverUserID, _messageController.text.trim());
-      _messageController.clear();
 
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
@@ -106,11 +105,20 @@ class _ChatPageState extends State<ChatPage> {
         if (snapshot.hasError) {
           return const Text('Error');
         }
-
+    
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
         var messages = snapshot.data!.docs.map((document) => document.data() as Map<String, dynamic>).toList();
+        
+        // Insert padding at the start of the reversed list in order to fix the message showing underneath the appbar
+        messages.insert(
+          messages.length,
+          {
+            'start': true,
+            'timestamp': Timestamp.fromMillisecondsSinceEpoch(0)
+          }
+        );
         
         // return ListView(
         //   shrinkWrap: true,
@@ -124,26 +132,31 @@ class _ChatPageState extends State<ChatPage> {
           reverse: true,
           sort: false,
           padding: const EdgeInsetsDirectional.symmetric(horizontal: 12.0),
+
           elements: messages,
-          groupBy: (message) => DateTime(
-            (message['timestamp'] as Timestamp).toDate().year,
-            (message['timestamp'] as Timestamp).toDate().month,
-            (message['timestamp'] as Timestamp).toDate().day,
-            (message['timestamp'] as Timestamp).toDate().hour,
-          ), 
-          groupHeaderBuilder: (Map<String, dynamic> message) => SizedBox(
-            height: 35,
-            child: Center(
-              child: Text(
-                '${DateFormat.yMMMMEEEEd().format((message['timestamp'] as Timestamp).toDate())} ${DateFormat.jm().format((message['timestamp'] as Timestamp).toDate())}',
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Color(0xFFAAAAAA),
-                  fontWeight: FontWeight.normal,
-                ),
+          groupBy: (message) {
+            return DateTime(
+              (message['timestamp'] as Timestamp).toDate().year,
+              (message['timestamp'] as Timestamp).toDate().month,
+              (message['timestamp'] as Timestamp).toDate().day,
+              (message['timestamp'] as Timestamp).toDate().hour,
+            );
+          }, 
+          groupHeaderBuilder: (Map<String, dynamic> message) {
+            return SizedBox(
+              height: 35,
+              child: Center(
+                child: Text(
+                  '${DateFormat.yMMMMEEEEd().format((message['timestamp'] as Timestamp).toDate())} ${DateFormat.jm().format((message['timestamp'] as Timestamp).toDate())}',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFFAAAAAA),
+                    fontWeight: FontWeight.normal,
+                  ),
+                )
               )
-            )
-          ),
+            );
+          },
           itemBuilder: (context, Map<String, dynamic> message) => _buildMessageItem(message),
         );
       }
@@ -152,6 +165,11 @@ class _ChatPageState extends State<ChatPage> {
 
   // Build message item
   Widget _buildMessageItem(Map<String, dynamic> data) {
+
+    if (data['start'] != null) {
+      // Creating the beginning padding at the start
+      return const SizedBox(height: 120,);
+    }
     // Map<String, dynamic> data = document.data() as Map<String, dynamic>;
     // Map<String, dynamic> data = document.toMap();
 

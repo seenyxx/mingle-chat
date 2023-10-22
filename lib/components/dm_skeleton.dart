@@ -14,6 +14,7 @@ class DirectMessagesSkeleton extends StatelessWidget {
       highlightColor: _shimmerColor,
       period: const Duration(milliseconds: 800),
       child: const ListTile(
+        contentPadding: EdgeInsets.all(15),
         leading: CircleAvatar(
           radius: 25,
           backgroundColor: _skeletonColor,
