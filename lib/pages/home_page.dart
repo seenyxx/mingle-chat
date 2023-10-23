@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:minglechat/components/dm_skeleton.dart';
 import 'package:minglechat/pages/chat_page.dart';
+import 'package:minglechat/pages/friends_page.dart';
+import 'package:minglechat/pages/user_profile.dart';
 import 'package:minglechat/services/auth/auth_service.dart';
 import 'package:provider/provider.dart';
 
@@ -42,15 +44,30 @@ class _HomePageState extends State<HomePage> {
         actions: [
           // Friends list
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(
+                  builder: (context) => const FriendsPage()
+                )
+              );
+            },
             icon: const Icon(Icons.people_alt_rounded),
             splashRadius: 18,
           ),
           // User settings
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(
+                  builder: (context) => const UserProfilePage()
+                )
+              );
+            },
             icon: const Icon(Icons.account_circle_rounded),
             splashRadius: 18,
+            
           ),
           // Sign out
           IconButton(

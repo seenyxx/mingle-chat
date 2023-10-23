@@ -34,7 +34,7 @@ class LoginTextField extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
-          borderSide: const BorderSide(color: Color(0xFF6C6C6C)),
+          borderSide: BorderSide.none,
         )
       ),
     );
