@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:minglechat/components/login_button.dart';
 import 'package:minglechat/components/login_text_field.dart';
+import 'package:minglechat/components/user_profile_text_field.dart';
+import 'package:minglechat/services/accounts/profile_service.dart';
 import 'package:minglechat/services/auth/auth_service.dart';
 import 'package:provider/provider.dart';
 
@@ -19,14 +21,28 @@ class _RegisterPageState extends State<RegisterPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+  final usernameController = TextEditingController();
+  final displayNameController = TextEditingController();
+
   final scrollController = ScrollController();
   late StreamSubscription<bool> keyboardSubscription;
+  final ProfileService _profileService = ProfileService();
 
   // Sign up
   void signUp() async {
+    if (emailController.text.isEmpty ||
+        passwordController.text.isEmpty ||
+        confirmPasswordController.text.isEmpty ||
+        usernameController.text.isEmpty ||
+        displayNameController.text.isEmpty) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Not all fields are filled")));
+      return;
+    }
+
     if (passwordController.text != confirmPasswordController.text) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Passwords do not match.")));
+          .showSnackBar(const SnackBar(content: Text("Passwords do not match")));
       return;
     }
 
@@ -40,6 +56,9 @@ class _RegisterPageState extends State<RegisterPage> {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
       }
     }
+
+    _profileService.updateUserProfile(
+        usernameController.text.trim(), usernameController.text.trim());
   }
 
   @override
@@ -76,11 +95,11 @@ class _RegisterPageState extends State<RegisterPage> {
           child: Column(
             children: [
               const SizedBox(height: 50.0),
-              const Image(
-                image: AssetImage("assets/icon.png"),
-                width: 192,
-                height: 192,
-              ),
+              // const Image(
+              //   image: AssetImage("assets/icon.png"),
+              //   width: 192,
+              //   height: 192,
+              // ),
               const Text("Create Account",
                   style: TextStyle(
                     fontSize: 42,
@@ -96,7 +115,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   hintText: 'Email',
                   obscureText: false),
 
-              const SizedBox(height: 20.0),
+              const SizedBox(height: 10.0),
 
               // Password Input
               LoginTextField(
@@ -105,7 +124,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   hintText: 'Password',
                   obscureText: true),
 
-              const SizedBox(height: 20.0),
+              const SizedBox(height: 10.0),
 
               // Confirm Password Input
               LoginTextField(
@@ -114,7 +133,24 @@ class _RegisterPageState extends State<RegisterPage> {
                   hintText: 'Confirm password',
                   obscureText: true),
 
-              const SizedBox(height: 20.0),
+              const SizedBox(height: 30.0),
+
+              UserProfileTextField(
+                hintText: 'Username',
+                controller: usernameController,
+                initialValue: 'a',
+                onStart: () {},
+              ),
+
+              const SizedBox(height: 10),
+
+              UserProfileTextField(
+                  hintText: 'Display Name',
+                  initialValue: '',
+                  controller: displayNameController,
+                  onStart: () {}),
+
+              const SizedBox(height: 20),
 
               // Sign up button
               LoginButton(onTap: signUp, text: "Sign Up"),

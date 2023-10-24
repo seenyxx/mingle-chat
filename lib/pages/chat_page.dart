@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
+import 'package:minglechat/components/avatar_skeleton.dart';
 import 'package:minglechat/components/chat_bubble.dart';
 import 'package:minglechat/components/message_text_field.dart';
 import 'package:minglechat/services/chat/chat_service.dart';
@@ -31,7 +32,8 @@ class _ChatPageState extends State<ChatPage> {
 
   void sendMessage() async {
     if (_messageController.text.trim().isNotEmpty) {
-      await _chatService.sendMessage(widget.receiverUserID, _messageController.text.trim());
+      await _chatService.sendMessage(
+          widget.receiverUserID, _messageController.text.trim());
 
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
@@ -64,8 +66,7 @@ class _ChatPageState extends State<ChatPage> {
           ),
           title: Row(children: [
             const Padding(
-                padding: EdgeInsets.only(right: 16),
-                child: CircleAvatar(radius: 20, backgroundColor: Colors.grey)),
+                padding: EdgeInsets.only(right: 16), child: AvatarSkeleton(radius: 20)),
             Text(
               widget.receiverUserEmail,
               style: const TextStyle(fontSize: 18),
@@ -88,8 +89,8 @@ class _ChatPageState extends State<ChatPage> {
   // Build message list
   Widget _buildMessageList() {
     return StreamBuilder(
-        stream:
-            _chatService.getMessages(widget.receiverUserID, _firebaseAuth.currentUser!.uid),
+        stream: _chatService.getMessages(
+            widget.receiverUserID, _firebaseAuth.currentUser!.uid),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const Text('Error');
@@ -140,7 +141,8 @@ class _ChatPageState extends State<ChatPage> {
                     ),
                   )));
             },
-            itemBuilder: (context, Map<String, dynamic> message) => _buildMessageItem(message),
+            itemBuilder: (context, Map<String, dynamic> message) =>
+                _buildMessageItem(message),
           );
         });
   }
@@ -164,8 +166,9 @@ class _ChatPageState extends State<ChatPage> {
     // DateTime timestampDate = (data['timestamp'] as Timestamp).toDate();
 
     return Row(
-      mainAxisAlignment:
-          alignment == Alignment.centerRight ? MainAxisAlignment.end : MainAxisAlignment.start,
+      mainAxisAlignment: alignment == Alignment.centerRight
+          ? MainAxisAlignment.end
+          : MainAxisAlignment.start,
       children: [
         Container(
             constraints: const BoxConstraints(maxWidth: 250),
@@ -177,7 +180,8 @@ class _ChatPageState extends State<ChatPage> {
                   : CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: EdgeInsets.only(left: isSender ? 0 : 34, right: isSender ? 34 : 0),
+                  padding:
+                      EdgeInsets.only(left: isSender ? 0 : 34, right: isSender ? 34 : 0),
                   child: Align(
                     alignment: alignment,
                     child: Text(
@@ -190,9 +194,11 @@ class _ChatPageState extends State<ChatPage> {
                     ),
                   ),
                 ),
-                ChatBubble(message: data['message'], isSender: isSender, uid: data['uid']),
+                ChatBubble(
+                    message: data['message'], isSender: isSender, uid: data['uid']),
                 Container(
-                  padding: EdgeInsets.only(left: isSender ? 0 : 10, right: isSender ? 10 : 0),
+                  padding:
+                      EdgeInsets.only(left: isSender ? 0 : 10, right: isSender ? 10 : 0),
                   child: Align(
                     alignment: alignment,
                     child: Text(

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:minglechat/components/avatar_skeleton.dart';
 import 'package:minglechat/components/green_button.dart';
 import 'package:minglechat/components/user_profile_text_field.dart';
 import 'package:minglechat/services/accounts/avatar_service.dart';
@@ -76,14 +77,7 @@ class UserProfilePageState extends State<UserProfilePage> {
                             }
 
                             if (snapshot.connectionState == ConnectionState.waiting) {
-                              return const CircleAvatar(
-                                radius: 64,
-                                backgroundColor: Colors.grey,
-                              );
-                            }
-
-                            if (snapshot.data == null) {
-                              return const Text('No Image found');
+                              return const AvatarSkeleton(radius: 64);
                             }
 
                             return CircleAvatar(

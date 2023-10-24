@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:minglechat/components/avatar_skeleton.dart';
 import 'package:minglechat/components/dm_skeleton.dart';
 import 'package:minglechat/pages/chat_page.dart';
 import 'package:minglechat/pages/friends_page.dart';
@@ -41,14 +42,7 @@ class _HomePageState extends State<HomePage> {
                     }
 
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const CircleAvatar(
-                        radius: 20,
-                        backgroundColor: Colors.grey,
-                      );
-                    }
-
-                    if (snapshot.data == null) {
-                      return const Text('No Image found');
+                      return const AvatarSkeleton(radius: 20);
                     }
 
                     return CircleAvatar(
@@ -132,7 +126,7 @@ class _HomePageState extends State<HomePage> {
     if (_auth.currentUser!.email != data['email']) {
       return ListTile(
         contentPadding: const EdgeInsets.all(15),
-        leading: const CircleAvatar(radius: 25, backgroundColor: Colors.grey),
+        leading: const AvatarSkeleton(radius: 25),
         title: Text(data['email']),
         onTap: () {
           Navigator.push(
