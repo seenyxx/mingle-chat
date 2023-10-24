@@ -123,6 +123,7 @@ class UserProfilePageState extends State<UserProfilePage> {
                                 onStart: () {
                                   initialUsername = usernameController.text;
                                 },
+                                prefixText: '@',
                                 hintText: 'Username',
                                 initialValue: data['username'],
                                 controller: usernameController),

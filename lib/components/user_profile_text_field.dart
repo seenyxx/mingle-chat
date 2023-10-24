@@ -6,14 +6,15 @@ class UserProfileTextField extends StatefulWidget {
   final String initialValue;
   final TextEditingController controller;
   final Function()? onStart;
+  final String? prefixText;
 
-  const UserProfileTextField({
-    super.key,
-    required this.hintText,
-    required this.initialValue,
-    required this.controller,
-    required this.onStart,
-  });
+  const UserProfileTextField(
+      {super.key,
+      required this.hintText,
+      required this.initialValue,
+      required this.controller,
+      required this.onStart,
+      this.prefixText});
 
   @override
   State<UserProfileTextField> createState() => _UserProfileTextFieldState();
@@ -36,6 +37,7 @@ class _UserProfileTextFieldState extends State<UserProfileTextField> {
       controller: widget.controller,
       inputFormatters: [LengthLimitingTextInputFormatter(32)],
       decoration: InputDecoration(
+          prefixText: widget.prefixText,
           filled: true,
           fillColor: const Color(0xFF21212F),
           hintText: widget.hintText,
