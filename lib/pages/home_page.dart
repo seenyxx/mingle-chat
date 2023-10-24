@@ -16,7 +16,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Sign user out
@@ -29,28 +28,21 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Row(
-          children: [
-            Padding(
+        title: const Row(children: [
+          Padding(
               padding: EdgeInsets.only(right: 16),
-              child: CircleAvatar(radius: 20, backgroundColor: Colors.grey)
-            ),
-            Text(
-              'Messages',
-              style: TextStyle(fontSize: 24),
-            ),
-          ]
-        ),
+              child: CircleAvatar(radius: 20, backgroundColor: Colors.grey)),
+          Text(
+            'Messages',
+            style: TextStyle(fontSize: 24),
+          ),
+        ]),
         actions: [
           // Friends list
           IconButton(
             onPressed: () {
               Navigator.push(
-                context, 
-                MaterialPageRoute(
-                  builder: (context) => const FriendsPage()
-                )
-              );
+                  context, MaterialPageRoute(builder: (context) => const FriendsPage()));
             },
             icon: const Icon(Icons.people_alt_rounded),
             splashRadius: 18,
@@ -59,15 +51,10 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             onPressed: () {
               Navigator.push(
-                context, 
-                MaterialPageRoute(
-                  builder: (context) => const UserProfilePage()
-                )
-              );
+                  context, MaterialPageRoute(builder: (context) => const UserProfilePage()));
             },
             icon: const Icon(Icons.account_circle_rounded),
             splashRadius: 18,
-            
           ),
           // Sign out
           IconButton(
@@ -83,11 +70,12 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildSkeletonLoader() {
     return ListView.separated(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      separatorBuilder: (context, index) => const SizedBox(height: 30,),
-      itemCount: 5,
-      itemBuilder: (context, index) => const DirectMessagesSkeleton()
-    );
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        separatorBuilder: (context, index) => const SizedBox(
+              height: 30,
+            ),
+        itemCount: 5,
+        itemBuilder: (context, index) => const DirectMessagesSkeleton());
   }
 
   // Build list of users
@@ -120,21 +108,16 @@ class _HomePageState extends State<HomePage> {
     if (_auth.currentUser!.email != data['email']) {
       return ListTile(
         contentPadding: const EdgeInsets.all(15),
-        leading: const CircleAvatar(
-          radius: 25,
-          backgroundColor: Colors.grey
-        ),
+        leading: const CircleAvatar(radius: 25, backgroundColor: Colors.grey),
         title: Text(data['email']),
         onTap: () {
           Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ChatPage(
-                receiverUserEmail: data['email'],
-                receiverUserID: data['uid'],
-              )
-            )
-          );
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ChatPage(
+                        receiverUserEmail: data['email'],
+                        receiverUserID: data['uid'],
+                      )));
         },
       );
     } else {

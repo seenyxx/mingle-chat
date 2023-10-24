@@ -15,33 +15,29 @@ class LoginButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(15),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment.bottomLeft,
-            end: Alignment.topRight,
-            stops: [
-              0,
-              1,
-            ],
-            colors: [
-              Color(0xFFFFA7B1),
-              Color(0xFFCC79FF),
-            ]
+          padding: const EdgeInsets.all(15),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+                begin: Alignment.bottomLeft,
+                end: Alignment.topRight,
+                stops: [
+                  0,
+                  1,
+                ],
+                colors: [
+                  Color(0xFFFFA7B1),
+                  Color(0xFFCC79FF),
+                ]),
+            borderRadius: BorderRadius.circular(12.0),
           ),
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-        child: Center(
-          child: Text(
-            text,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            )
-          ),
-        )
-      ),
+          child: Center(
+            child: Text(text,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                )),
+          )),
     );
   }
 }

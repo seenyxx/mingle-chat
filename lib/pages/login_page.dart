@@ -5,7 +5,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:minglechat/components/login_button.dart';
 import 'package:minglechat/components/login_text_field.dart';
 import 'package:minglechat/services/auth/auth_service.dart';
-import 'package:provider/provider.dart'; 
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   final void Function()? onTap;
@@ -16,7 +16,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final scrollController = ScrollController();
@@ -27,7 +26,8 @@ class _LoginPageState extends State<LoginPage> {
     final authService = Provider.of<AuthService>(context, listen: false);
 
     try {
-      await authService.signInWithEmailandPassword(emailController.text, passwordController.text);
+      await authService.signInWithEmailandPassword(
+          emailController.text, passwordController.text);
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
@@ -38,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    
+
     var kbVisibilityController = KeyboardVisibilityController();
     keyboardSubscription = kbVisibilityController.onChange.listen((bool visible) {
       if (visible && scrollController.hasClients) {
@@ -60,11 +60,11 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: SingleChildScrollView(
-        controller: scrollController,
-        child: SafeArea(
-          child: Center(
+        resizeToAvoidBottomInset: false,
+        body: SingleChildScrollView(
+          controller: scrollController,
+          child: SafeArea(
+              child: Center(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 50.0),
               child: Column(
@@ -75,46 +75,43 @@ class _LoginPageState extends State<LoginPage> {
                     width: 192,
                     height: 192,
                   ),
-                  const Text("Welcome", style:
-                    TextStyle(
-                      fontSize: 42,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    )
-                  ),
+                  const Text("Welcome",
+                      style: TextStyle(
+                        fontSize: 42,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      )),
                   const SizedBox(height: 20.0),
-      
+
                   // Email Input
                   LoginTextField(
-                    controller: emailController,
-                    hintText: 'Email',
-                    obscureText: false
-                  ),
-      
+                      scrollController: scrollController,
+                      controller: emailController,
+                      hintText: 'Email',
+                      obscureText: false),
+
                   const SizedBox(height: 20.0),
-      
+
                   // Password Input
                   LoginTextField(
-                    controller: passwordController,
-                    hintText: 'Password',
-                    obscureText: true
-                  ),
-      
+                      scrollController: scrollController,
+                      controller: passwordController,
+                      hintText: 'Password',
+                      obscureText: true),
+
                   const SizedBox(height: 20.0),
                   // Sign in button
                   LoginButton(onTap: signIn, text: "Sign In"),
-      
+
                   const SizedBox(height: 20.0),
-      
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
-                        "Not a member?",
-                        style: TextStyle(
-                          fontSize: 16,
-                        )
-                      ),
+                      const Text("Not a member?",
+                          style: TextStyle(
+                            fontSize: 16,
+                          )),
                       const SizedBox(width: 4),
                       GestureDetector(
                         onTap: widget.onTap,
@@ -131,9 +128,7 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
             ),
-        )
-        ),
-      ) 
-    );
+          )),
+        ));
   }
 }

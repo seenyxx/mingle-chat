@@ -14,7 +14,8 @@ class ChatService extends ChangeNotifier {
     final String currentUserId = _firebaseAuth.currentUser!.uid;
     final String currentUserEmail = _firebaseAuth.currentUser!.email.toString();
     final Timestamp timestamp = Timestamp.now();
-    final String msgUid = [timestamp.millisecondsSinceEpoch.toString(), receiverId, currentUserId].join('_');
+    final String msgUid =
+        [timestamp.millisecondsSinceEpoch.toString(), receiverId, currentUserId].join('_');
 
     Message newMessage = Message(
       uid: msgUid,
@@ -31,11 +32,11 @@ class ChatService extends ChangeNotifier {
 
     // Add message to firestore
     await _firestore
-      .collection('chat_rooms')
-      .doc(chatRoomId)
-      .collection('messages')
-      .doc(newMessage.uid)
-      .set(newMessage.toMap());
+        .collection('chat_rooms')
+        .doc(chatRoomId)
+        .collection('messages')
+        .doc(newMessage.uid)
+        .set(newMessage.toMap());
   }
 
   // Retrieve messages
@@ -45,10 +46,10 @@ class ChatService extends ChangeNotifier {
     String chatRoomId = ids.join('_');
 
     return _firestore
-      .collection('chat_rooms')
-      .doc(chatRoomId)
-      .collection('messages')
-      .orderBy('timestamp', descending: true)
-      .snapshots();
+        .collection('chat_rooms')
+        .doc(chatRoomId)
+        .collection('messages')
+        .orderBy('timestamp', descending: true)
+        .snapshots();
   }
 }
