@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:minglechat/components/green_button.dart';
 import 'package:minglechat/components/user_profile_text_field.dart';
+import 'package:minglechat/services/accounts/avatar_service.dart';
 import 'package:minglechat/services/accounts/profile_service.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -22,6 +23,7 @@ class UserProfilePageState extends State<UserProfilePage> {
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final ProfileService _profileService = ProfileService();
+  final AvatarService _avatarService = AvatarService();
 
   static const Color _skeletonColor = Color(0xFF21212F);
   static const Color _shimmerColor = Color(0xFF343449);
@@ -65,17 +67,38 @@ class UserProfilePageState extends State<UserProfilePage> {
                 children: [
                   Stack(
                     children: [
-                      CircleAvatar(
-                        radius: 64,
-                        backgroundImage: avatarImage != null
-                            ? MemoryImage(avatarImage!)
-                            : _defaultAvatar(),
-                      ),
+                      FutureBuilder(
+                          future: _profileService
+                              .getProfileAvatarUrl(_firebaseAuth.currentUser!.uid),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            }
+
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return const CircleAvatar(
+                                radius: 64,
+                                backgroundColor: Colors.grey,
+                              );
+                            }
+
+                            if (snapshot.data == null) {
+                              return const Text('No Image found');
+                            }
+
+                            return CircleAvatar(
+                                radius: 64,
+                                backgroundColor: Colors.blueGrey,
+                                backgroundImage: avatarImage != null
+                                    ? MemoryImage(avatarImage!)
+                                    : NetworkImage(snapshot.data!)
+                                        as ImageProvider<Object>);
+                          }),
                       Positioned(
                           bottom: 0,
                           right: 0,
                           child: CircleAvatar(
-                            backgroundColor: const Color(0xAA21212F),
+                            backgroundColor: const Color(0xDD21212F),
                             child: IconButton(
                               onPressed: () async {
                                 // Pick image when button is clicked and then state is updated to rebuild the avatar
@@ -99,7 +122,7 @@ class UserProfilePageState extends State<UserProfilePage> {
                           _profileService.getUserProfile(_firebaseAuth.currentUser!.uid),
                       builder: (context, snapshot) {
                         if (snapshot.hasError) {
-                          return Text('Error = ${snapshot.error}');
+                          return Text('Error: ${snapshot.error}');
                         }
                         if (snapshot.connectionState == ConnectionState.waiting) {
                           // if (true) {
@@ -150,7 +173,8 @@ class UserProfilePageState extends State<UserProfilePage> {
                                   }
 
                                   if (initialUsername == usernameController.text &&
-                                      initialDisplayName == displayNameController.text) {
+                                      initialDisplayName == displayNameController.text &&
+                                      avatarImage == null) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                         const SnackBar(
                                             content: Text('No changes detected')));
@@ -160,9 +184,18 @@ class UserProfilePageState extends State<UserProfilePage> {
                                   initialDisplayName = displayNameController.text;
                                   initialUsername = usernameController.text;
 
-                                  _profileService.updateUserProfile(
+                                  if (avatarImage != null) {
+                                    String avatarUrl =
+                                        await _avatarService.uploadImageToStorage(
+                                            _firebaseAuth.currentUser!.uid, avatarImage!);
+                                    await _profileService
+                                        .updateProfileAvatarUrL(avatarUrl);
+                                  }
+
+                                  await _profileService.updateUserProfile(
                                       usernameController.text,
                                       displayNameController.text);
+
                                   if (context.mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                         const SnackBar(
@@ -210,10 +243,5 @@ class UserProfilePageState extends State<UserProfilePage> {
         ),
       ),
     );
-  }
-
-  ImageProvider<Object> _defaultAvatar() {
-    return const NetworkImage(
-        'https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg');
   }
 }

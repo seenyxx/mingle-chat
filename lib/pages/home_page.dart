@@ -5,6 +5,7 @@ import 'package:minglechat/components/dm_skeleton.dart';
 import 'package:minglechat/pages/chat_page.dart';
 import 'package:minglechat/pages/friends_page.dart';
 import 'package:minglechat/pages/user_profile.dart';
+import 'package:minglechat/services/accounts/profile_service.dart';
 import 'package:minglechat/services/auth/auth_service.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +18,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final ProfileService _profileService = ProfileService();
 
   // Sign user out
   void signOut() {
@@ -28,11 +30,33 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Row(children: [
+        title: Row(children: [
           Padding(
-              padding: EdgeInsets.only(right: 16),
-              child: CircleAvatar(radius: 20, backgroundColor: Colors.grey)),
-          Text(
+              padding: const EdgeInsets.only(right: 16),
+              child: FutureBuilder(
+                  future: _profileService.getProfileAvatarUrl(_auth.currentUser!.uid),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
+
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.grey,
+                      );
+                    }
+
+                    if (snapshot.data == null) {
+                      return const Text('No Image found');
+                    }
+
+                    return CircleAvatar(
+                      radius: 20,
+                      backgroundImage: NetworkImage(snapshot.data!),
+                    );
+                  })),
+          const Text(
             'Messages',
             style: TextStyle(fontSize: 24),
           ),
@@ -50,8 +74,8 @@ class _HomePageState extends State<HomePage> {
           // User settings
           IconButton(
             onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => const UserProfilePage()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const UserProfilePage()));
             },
             icon: const Icon(Icons.account_circle_rounded),
             splashRadius: 18,

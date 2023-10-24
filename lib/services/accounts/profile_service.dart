@@ -3,6 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:minglechat/models/user_profile.dart';
 
+String _defaultAvatarUrl =
+    'https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg';
+
 class ProfileService extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -21,6 +24,23 @@ class ProfileService extends ChangeNotifier {
   }
 
   // TODO: Implement avatar url upload into database and retrieval from database
+
+  Future<void> updateProfileAvatarUrL(String avatarUrl) async {
+    await _firestore
+        .collection('profiles')
+        .doc(_firebaseAuth.currentUser!.uid)
+        .set({'avatarUrl': avatarUrl}, SetOptions(merge: true));
+  }
+
+  Future<String> getProfileAvatarUrl(String uid) async {
+    Map<String, dynamic>? userProfile = (await getUserProfile(uid)).data();
+
+    if (userProfile == null) {
+      return _defaultAvatarUrl;
+    }
+
+    return userProfile['avatarUrl'] ?? _defaultAvatarUrl;
+  }
 
   Future<DocumentSnapshot<Map<String, dynamic>>> getUserProfile(String userId) {
     return _firestore.collection('profiles').doc(userId).get();
