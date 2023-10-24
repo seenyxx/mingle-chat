@@ -11,12 +11,10 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => AuthService(),
-      child: const MyApp(),
-    )
-  );
+  runApp(ChangeNotifierProvider(
+    create: (context) => AuthService(),
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -29,30 +27,17 @@ class MyApp extends StatelessWidget {
       home: const AuthGate(),
       theme: ThemeData(
         progressIndicatorTheme: const ProgressIndicatorThemeData(
-          circularTrackColor: Color(0xFF21212F),
-          color: Color(0xFF343449)
-        ),
+            circularTrackColor: Color(0xFF21212F), color: Color(0xFF343449)),
         scaffoldBackgroundColor: const Color(0xFF120D1E),
         textTheme: GoogleFonts.nunitoSansTextTheme(
           Theme.of(context).textTheme,
-        ).apply(
-          bodyColor: Colors.white
-        ),
+        ).apply(bodyColor: Colors.white),
         appBarTheme: const AppBarTheme(
-          toolbarHeight: 80,
-          titleTextStyle: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold
-          ),
-          backgroundColor: Color(0xFF120D1E),
-          foregroundColor: Colors.white,
-          shape: Border(
-            bottom: BorderSide(
-              color: Color(0xFF21212F),
-              width: 4
-            )
-          )
-        ),
+            toolbarHeight: 80,
+            titleTextStyle: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            backgroundColor: Color(0xFF120D1E),
+            foregroundColor: Colors.white,
+            shape: Border(bottom: BorderSide(color: Color(0xFF21212F), width: 4))),
       ),
     );
   }

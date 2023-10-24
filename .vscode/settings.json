@@ -2,6 +2,6 @@
     "editor.defaultFormatter": "Dart-Code.flutter",
     "editor.formatOnSave": true,
     "editor.formatOnPaste": true,
-    "dart.lineLength": 95,
-    "editor.rulers": [95]
+    "dart.lineLength": 90,
+    "editor.rulers": [90]
 }

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:minglechat/model/message.dart';
+import 'package:minglechat/models/message.dart';
 
 class ChatService extends ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -14,8 +14,11 @@ class ChatService extends ChangeNotifier {
     final String currentUserId = _firebaseAuth.currentUser!.uid;
     final String currentUserEmail = _firebaseAuth.currentUser!.email.toString();
     final Timestamp timestamp = Timestamp.now();
-    final String msgUid =
-        [timestamp.millisecondsSinceEpoch.toString(), receiverId, currentUserId].join('_');
+    final String msgUid = [
+      timestamp.millisecondsSinceEpoch.toString(),
+      receiverId,
+      currentUserId
+    ].join('_');
 
     Message newMessage = Message(
       uid: msgUid,

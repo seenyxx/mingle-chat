@@ -5,12 +5,15 @@ class UserProfileTextField extends StatefulWidget {
   final String hintText;
   final String initialValue;
   final TextEditingController controller;
+  final Function()? onStart;
 
-  const UserProfileTextField(
-      {super.key,
-      required this.hintText,
-      required this.initialValue,
-      required this.controller});
+  const UserProfileTextField({
+    super.key,
+    required this.hintText,
+    required this.initialValue,
+    required this.controller,
+    required this.onStart,
+  });
 
   @override
   State<UserProfileTextField> createState() => _UserProfileTextFieldState();
@@ -21,6 +24,7 @@ class _UserProfileTextFieldState extends State<UserProfileTextField> {
   void initState() {
     super.initState();
     widget.controller.text = widget.initialValue;
+    widget.onStart!();
   }
 
   @override
