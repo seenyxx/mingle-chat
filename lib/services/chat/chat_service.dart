@@ -55,4 +55,20 @@ class ChatService extends ChangeNotifier {
         .orderBy('timestamp', descending: true)
         .snapshots();
   }
+
+  Future<void> deleteMessage(
+      String senderId, String receiverId, String timestampMillisecondsString) async {
+    final String msgUid = [timestampMillisecondsString, receiverId, senderId].join('_');
+
+    List<String> ids = [senderId, receiverId];
+    ids.sort();
+    String chatRoomId = ids.join('_');
+
+    return _firestore
+        .collection('chat_rooms')
+        .doc(chatRoomId)
+        .collection('messages')
+        .doc(msgUid)
+        .delete();
+  }
 }

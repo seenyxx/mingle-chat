@@ -127,8 +127,8 @@ class _ChatPageState extends State<ChatPage> {
                 }
 
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  // return const Center(child: CircularProgressIndicator());
-                  return Container();
+                  return const Center(child: CircularProgressIndicator());
+                  // return Container();
                 }
 
                 senderUserAvatarUrl =
@@ -226,7 +226,7 @@ class _ChatPageState extends State<ChatPage> {
         : Alignment.centerLeft;
 
     bool isSender = data['senderId'] == _firebaseAuth.currentUser!.uid;
-    // DateTime timestampDate = (data['timestamp'] as Timestamp).toDate();
+    DateTime timestampDate = (data['timestamp'] as Timestamp).toDate();
 
     return Row(
       mainAxisAlignment: alignment == Alignment.centerRight
@@ -242,17 +242,20 @@ class _ChatPageState extends State<ChatPage> {
                   ? CrossAxisAlignment.end
                   : CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding:
-                      EdgeInsets.only(left: isSender ? 0 : 34, right: isSender ? 34 : 0),
-                  child: Align(
-                    alignment: alignment,
-                    child: Text(
-                      isSender ? senderUserDisplayName : widget.receiverUserDisplayName,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Color(0xFFAAAAAA),
-                        fontWeight: FontWeight.bold,
+                FittedBox(
+                  fit: BoxFit.cover,
+                  child: Container(
+                    padding: EdgeInsets.only(
+                        left: isSender ? 0 : 34, right: isSender ? 34 : 0),
+                    child: Align(
+                      alignment: alignment,
+                      child: Text(
+                        isSender ? senderUserDisplayName : widget.receiverUserDisplayName,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFFAAAAAA),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
@@ -262,22 +265,27 @@ class _ChatPageState extends State<ChatPage> {
                         isSender ? senderUserAvatarUrl : widget.receiverUserAvatarUrl,
                     message: data['message'],
                     isSender: isSender,
-                    uid: data['uid']),
-                Container(
-                  padding:
-                      EdgeInsets.only(left: isSender ? 0 : 10, right: isSender ? 10 : 0),
-                  child: Align(
-                    alignment: alignment,
-                    child: Text(
-                      DateFormat.jm().format((data['timestamp'] as Timestamp).toDate()),
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Color(0xFFAAAAAA),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
+                    senderId: data['senderId'],
+                    receiverId: data['receiverId'],
+                    timestampString: DateFormat.jms().format(timestampDate),
+                    timestampMillisecondsString: (data['timestamp'] as Timestamp)
+                        .millisecondsSinceEpoch
+                        .toString()),
+                // Container(
+                //   padding:
+                //       EdgeInsets.only(left: isSender ? 0 : 10, right: isSender ? 10 : 0),
+                //   child: Align(
+                //     alignment: alignment,
+                //     child: Text(
+                //       DateFormat.jm().format((data['timestamp'] as Timestamp).toDate()),
+                //       style: const TextStyle(
+                //         fontSize: 12,
+                //         color: Color(0xFFAAAAAA),
+                //         fontWeight: FontWeight.bold,
+                //       ),
+                //     ),
+                //   ),
+                // ),
               ],
             )),
       ],

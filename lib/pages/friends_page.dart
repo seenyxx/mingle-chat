@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:minglechat/components/dm_skeleton.dart';
 
 class FriendsPage extends StatefulWidget {
   const FriendsPage({super.key});
@@ -20,6 +21,7 @@ class _FriendsPageState extends State<FriendsPage> {
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
         ),
       ),
+      body: const Column(children: [DirectMessagesSkeleton()]),
     );
   }
 }

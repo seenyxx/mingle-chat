@@ -193,6 +193,7 @@ class UserProfilePageState extends State<UserProfilePage> {
                                   if (context.mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                         const SnackBar(
+                                            backgroundColor: Colors.green,
                                             content: Text('Profile updated!')));
                                   }
                                 },
