@@ -235,31 +235,35 @@ class _ChatPageState extends State<ChatPage> {
       children: [
         Container(
             constraints: const BoxConstraints(maxWidth: 250),
-            margin: const EdgeInsets.symmetric(vertical: 10),
+            margin: EdgeInsets.symmetric(vertical: isSender == true ? 0 : 10),
             alignment: alignment,
             child: Column(
               crossAxisAlignment: (data['senderId'] == _firebaseAuth.currentUser!.uid)
                   ? CrossAxisAlignment.end
                   : CrossAxisAlignment.start,
               children: [
-                FittedBox(
-                  fit: BoxFit.cover,
-                  child: Container(
-                    padding: EdgeInsets.only(
-                        left: isSender ? 0 : 34, right: isSender ? 34 : 0),
-                    child: Align(
-                      alignment: alignment,
-                      child: Text(
-                        isSender ? senderUserDisplayName : widget.receiverUserDisplayName,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFFAAAAAA),
-                          fontWeight: FontWeight.bold,
+                isSender
+                    ? const SizedBox.shrink()
+                    : FittedBox(
+                        fit: BoxFit.cover,
+                        child: Container(
+                          padding: EdgeInsets.only(
+                              left: isSender ? 0 : 34, right: isSender ? 34 : 0),
+                          child: Align(
+                            alignment: alignment,
+                            child: Text(
+                              isSender
+                                  ? senderUserDisplayName
+                                  : widget.receiverUserDisplayName,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Color(0xFFAAAAAA),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                ),
                 ChatBubble(
                     avatarUrl:
                         isSender ? senderUserAvatarUrl : widget.receiverUserAvatarUrl,

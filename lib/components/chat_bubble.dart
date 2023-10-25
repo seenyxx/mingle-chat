@@ -45,7 +45,7 @@ class ChatBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     return FocusedMenuHolder(
       menuWidth: MediaQuery.of(context).size.width * 0.5,
-      blurSize: 60.0,
+      blurSize: 20.0,
       menuItemExtent: 45,
       onPressed: () {},
       animateMenuItems: false,
@@ -84,7 +84,7 @@ class ChatBubble extends StatelessWidget {
             ]
           : [_buildTimestampMenu(), _buildCopyMessageMenu(context)],
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
         child: Stack(clipBehavior: Clip.none, children: [
           Container(
               // constraints: const BoxConstraints(minWidth: 90, minHeight: 10),
@@ -97,15 +97,17 @@ class ChatBubble extends StatelessWidget {
                 style: const TextStyle(
                     color: Colors.black, fontSize: 16, fontWeight: FontWeight.normal),
               )),
-          Positioned(
-              top: -28,
-              right: isSender ? -18 : null,
-              left: isSender ? null : -18,
-              child: CircleAvatar(
-                radius: 20,
-                backgroundColor: Colors.red,
-                backgroundImage: NetworkImage(avatarUrl),
-              )),
+          isSender
+              ? const SizedBox.shrink()
+              : Positioned(
+                  top: -28,
+                  right: isSender ? -18 : null,
+                  left: isSender ? null : -18,
+                  child: CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Colors.red,
+                    backgroundImage: NetworkImage(avatarUrl),
+                  )),
           // Positioned(
           //   bottom: 5,
           //   right: 10,
