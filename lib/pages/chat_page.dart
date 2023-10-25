@@ -61,7 +61,9 @@ class _ChatPageState extends State<ChatPage> {
           leading: IconButton(
             highlightColor: Colors.transparent,
             splashRadius: 20,
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(
+              context,
+            ),
             icon: const Icon(Icons.arrow_back_ios_new_rounded),
           ),
           title: Row(children: [

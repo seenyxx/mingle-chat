@@ -10,9 +10,13 @@ class ProfileService extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  Future<void> updateUserProfile(String username, String displayName) async {
+  Future<void> updateUserProfile(
+    String username,
+    String displayName, [
+    String? uid,
+  ]) async {
     UserProfile userProfile = UserProfile(
-      uid: _firebaseAuth.currentUser!.uid,
+      uid: uid ?? _firebaseAuth.currentUser!.uid,
       username: username,
       displayName: displayName,
     );
@@ -51,6 +55,10 @@ class ProfileService extends ChangeNotifier {
         .collection('profiles')
         .where('username', isEqualTo: username)
         .get();
+
+    if (_firebaseAuth.currentUser == null) {
+      return result.docs.isNotEmpty;
+    }
 
     // The following conditional statements below skip the need for the use of another firestore query (optimisation)
 

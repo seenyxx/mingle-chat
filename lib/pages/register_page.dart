@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:minglechat/components/login_button.dart';
@@ -7,7 +8,6 @@ import 'package:minglechat/components/login_text_field.dart';
 import 'package:minglechat/components/user_profile_text_field.dart';
 import 'package:minglechat/services/accounts/profile_service.dart';
 import 'package:minglechat/services/auth/auth_service.dart';
-import 'package:provider/provider.dart';
 
 class RegisterPage extends StatefulWidget {
   final void Function()? onTap;
@@ -27,6 +27,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final scrollController = ScrollController();
   late StreamSubscription<bool> keyboardSubscription;
   final ProfileService _profileService = ProfileService();
+  final AuthService _authService = AuthService();
 
   // Sign up
   void signUp() async {
@@ -46,19 +47,28 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
-    final authService = Provider.of<AuthService>(context, listen: false);
+    bool isUsernameInUse =
+        await _profileService.isUsernameTaken(usernameController.text.trim());
+
+    if (isUsernameInUse) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Username is already taken')));
+      }
+      return;
+    }
 
     try {
-      await authService.signUpWithEmailandPassword(
+      UserCredential usercreds = await _authService.signUpWithEmailandPassword(
           emailController.text, passwordController.text);
+
+      _profileService.updateUserProfile(usernameController.text.trim(),
+          usernameController.text.trim(), usercreds.user!.uid);
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
       }
     }
-
-    _profileService.updateUserProfile(
-        usernameController.text.trim(), usernameController.text.trim());
   }
 
   @override
@@ -138,7 +148,7 @@ class _RegisterPageState extends State<RegisterPage> {
               UserProfileTextField(
                 hintText: 'Username',
                 controller: usernameController,
-                initialValue: 'a',
+                initialValue: '',
                 onStart: () {},
               ),
 

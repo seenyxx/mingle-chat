@@ -28,6 +28,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -60,7 +65,9 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             onPressed: () {
               Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => const FriendsPage()));
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const FriendsPage(), maintainState: false));
             },
             icon: const Icon(Icons.people_alt_rounded),
             splashRadius: 18,
@@ -122,22 +129,50 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildUserListItem(DocumentSnapshot document) {
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+    String uid = data['uid'];
 
     if (_auth.currentUser!.email != data['email']) {
-      return ListTile(
-        contentPadding: const EdgeInsets.all(15),
-        leading: const AvatarSkeleton(radius: 25),
-        title: Text(data['email']),
-        onTap: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ChatPage(
-                        receiverUserEmail: data['email'],
-                        receiverUserID: data['uid'],
-                      )));
-        },
-      );
+      return FutureBuilder(
+          future: _profileService.getUserProfile(uid),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            }
+
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const DirectMessagesSkeleton();
+            }
+
+            Map<String, dynamic> profile = snapshot.data!.data() as Map<String, dynamic>;
+
+            return ListTile(
+              contentPadding: const EdgeInsets.all(15),
+              leading: FutureBuilder(
+                  future: _profileService.getProfileAvatarUrl(profile['uid']),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
+
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const AvatarSkeleton(radius: 25);
+                    }
+                    return const CircleAvatar(
+                      radius: 25,
+                    );
+                  }),
+              title: Text(profile['displayName']),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ChatPage(
+                              receiverUserEmail: data['displayName'],
+                              receiverUserID: data['uid'],
+                            )));
+              },
+            );
+          });
     } else {
       return const SizedBox.shrink();
     }
