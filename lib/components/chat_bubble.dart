@@ -4,6 +4,7 @@ class ChatBubble extends StatelessWidget {
   final String message;
   final bool isSender;
   final String uid;
+  final String avatarUrl;
 
   static LinearGradient senderGradient =
       const LinearGradient(begin: Alignment.bottomLeft, end: Alignment.topRight, stops: [
@@ -24,7 +25,11 @@ class ChatBubble extends StatelessWidget {
   ]);
 
   const ChatBubble(
-      {super.key, required this.message, required this.isSender, required this.uid});
+      {super.key,
+      required this.message,
+      required this.isSender,
+      required this.uid,
+      required this.avatarUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -45,9 +50,10 @@ class ChatBubble extends StatelessWidget {
             top: -28,
             right: isSender ? -18 : null,
             left: isSender ? null : -18,
-            child: const CircleAvatar(
+            child: CircleAvatar(
               radius: 20,
               backgroundColor: Colors.red,
+              backgroundImage: NetworkImage(avatarUrl),
             )),
       ]),
     );

@@ -5,20 +5,23 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
-import 'package:minglechat/components/avatar_skeleton.dart';
 import 'package:minglechat/components/chat_bubble.dart';
 import 'package:minglechat/components/message_text_field.dart';
+import 'package:minglechat/services/accounts/profile_service.dart';
 import 'package:minglechat/services/chat/chat_service.dart';
 
 class ChatPage extends StatefulWidget {
-  final String receiverUserEmail;
   final String receiverUserID;
+  final String receiverUserAvatarUrl;
+  final String receiverUserDisplayName;
+  final String receiverUsername;
 
-  const ChatPage({
-    super.key,
-    required this.receiverUserEmail,
-    required this.receiverUserID,
-  });
+  const ChatPage(
+      {super.key,
+      required this.receiverUsername,
+      required this.receiverUserDisplayName,
+      required this.receiverUserID,
+      required this.receiverUserAvatarUrl});
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -29,6 +32,10 @@ class _ChatPageState extends State<ChatPage> {
   final ChatService _chatService = ChatService();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final ScrollController _scrollController = ScrollController();
+  final ProfileService _profileService = ProfileService();
+
+  late String senderUserAvatarUrl = '';
+  late String senderUserDisplayName;
 
   void sendMessage() async {
     if (_messageController.text.trim().isNotEmpty) {
@@ -46,40 +53,94 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   @override
+  void dispose() {
+    _profileService.dispose();
+    _chatService.dispose();
+    _scrollController.dispose();
+    _messageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-          elevation: 0,
-          backgroundColor: const Color(0xBB120D1E),
-          shape: const Border(bottom: BorderSide(color: Color(0x8821212F), width: 4)),
-          flexibleSpace: ClipRect(
-              child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 7, sigmaY: 7),
-            child: Container(color: Colors.transparent),
-          )),
-          leading: IconButton(
-            highlightColor: Colors.transparent,
-            splashRadius: 20,
-            onPressed: () => Navigator.pop(
-              context,
-            ),
-            icon: const Icon(Icons.arrow_back_ios_new_rounded),
+        elevation: 0,
+        backgroundColor: const Color(0xBB120D1E),
+        shape: const Border(bottom: BorderSide(color: Color(0x8821212F), width: 4)),
+        flexibleSpace: ClipRect(
+            child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 7, sigmaY: 7),
+          child: Container(color: Colors.transparent),
+        )),
+        leading: IconButton(
+          highlightColor: Colors.transparent,
+          splashRadius: 20,
+          onPressed: () => Navigator.pop(
+            context,
           ),
-          title: Row(children: [
-            const Padding(
-                padding: EdgeInsets.only(right: 16), child: AvatarSkeleton(radius: 20)),
-            Text(
-              widget.receiverUserEmail,
-              style: const TextStyle(fontSize: 18),
-            ),
-          ])),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded),
+        ),
+        title: FittedBox(
+          fit: BoxFit.fitWidth,
+          child: Row(children: [
+            Padding(
+                padding: const EdgeInsets.only(right: 16),
+                child: CircleAvatar(
+                  radius: 20,
+                  backgroundImage: NetworkImage(widget.receiverUserAvatarUrl),
+                )),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.receiverUserDisplayName,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 2),
+                  child: Text('@${widget.receiverUsername}',
+                      style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.grey)),
+                ),
+              ],
+            )
+          ]),
+        ),
+      ),
       body: Column(
         children: [
           // Messages
-          Expanded(
-            child: _buildMessageList(),
-          ),
+          FutureBuilder(
+              future: _profileService.getUserProfile(_firebaseAuth.currentUser!.uid),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Text('Error');
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  // return const Center(child: CircularProgressIndicator());
+                  return Container();
+                }
+
+                senderUserAvatarUrl =
+                    snapshot.data!.data().toString().contains('avatarUrl') == true
+                        ? snapshot.data!['avatarUrl']
+                        : _profileService.defaultAvatar();
+                senderUserDisplayName = snapshot.data!['displayName'];
+
+                return Expanded(
+                  child: _buildMessageList(),
+                );
+              }),
 
           _buildMessageInput(),
           const SizedBox(height: 10),
@@ -187,7 +248,7 @@ class _ChatPageState extends State<ChatPage> {
                   child: Align(
                     alignment: alignment,
                     child: Text(
-                      data['senderEmail'],
+                      isSender ? senderUserDisplayName : widget.receiverUserDisplayName,
                       style: const TextStyle(
                         fontSize: 12,
                         color: Color(0xFFAAAAAA),
@@ -197,7 +258,11 @@ class _ChatPageState extends State<ChatPage> {
                   ),
                 ),
                 ChatBubble(
-                    message: data['message'], isSender: isSender, uid: data['uid']),
+                    avatarUrl:
+                        isSender ? senderUserAvatarUrl : widget.receiverUserAvatarUrl,
+                    message: data['message'],
+                    isSender: isSender,
+                    uid: data['uid']),
                 Container(
                   padding:
                       EdgeInsets.only(left: isSender ? 0 : 10, right: isSender ? 10 : 0),

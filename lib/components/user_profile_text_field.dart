@@ -7,6 +7,7 @@ class UserProfileTextField extends StatefulWidget {
   final TextEditingController controller;
   final Function()? onStart;
   final String? prefixText;
+  final bool? restrictCharacters;
 
   const UserProfileTextField(
       {super.key,
@@ -14,7 +15,8 @@ class UserProfileTextField extends StatefulWidget {
       required this.initialValue,
       required this.controller,
       required this.onStart,
-      this.prefixText});
+      this.prefixText,
+      this.restrictCharacters});
 
   @override
   State<UserProfileTextField> createState() => _UserProfileTextFieldState();
@@ -35,7 +37,12 @@ class _UserProfileTextFieldState extends State<UserProfileTextField> {
       autofocus: false,
       enableSuggestions: false,
       controller: widget.controller,
-      inputFormatters: [LengthLimitingTextInputFormatter(32)],
+      inputFormatters: widget.restrictCharacters == true
+          ? [
+              FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]|[_|.]')),
+              LengthLimitingTextInputFormatter(32)
+            ]
+          : [LengthLimitingTextInputFormatter(32)],
       decoration: InputDecoration(
           prefixText: widget.prefixText,
           filled: true,

@@ -63,7 +63,7 @@ class _RegisterPageState extends State<RegisterPage> {
           emailController.text, passwordController.text);
 
       _profileService.updateUserProfile(usernameController.text.trim(),
-          usernameController.text.trim(), usercreds.user!.uid);
+          displayNameController.text.trim(), usercreds.user!.uid);
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
@@ -150,6 +150,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 controller: usernameController,
                 initialValue: '',
                 onStart: () {},
+                restrictCharacters: true,
               ),
 
               const SizedBox(height: 10),

@@ -36,7 +36,6 @@ class UserProfilePageState extends State<UserProfilePage> {
 
   Future<Uint8List?> pickAvatarImageFile() async {
     // TODO: IOS functionality has not been implemented yet because I have not added the stuff required for image picker to work into the plist file
-    // TODO: Implement image picker and firebase cloud storage
     final ImagePicker imagePicker = ImagePicker();
     final XFile? image = await imagePicker.pickImage(source: ImageSource.gallery);
     if (image != null) {
@@ -82,7 +81,7 @@ class UserProfilePageState extends State<UserProfilePage> {
 
                             return CircleAvatar(
                                 radius: 64,
-                                backgroundColor: Colors.blueGrey,
+                                backgroundColor: _skeletonColor,
                                 backgroundImage: avatarImage != null
                                     ? MemoryImage(avatarImage!)
                                     : NetworkImage(snapshot.data!)
@@ -143,6 +142,7 @@ class UserProfilePageState extends State<UserProfilePage> {
                                 prefixText: '@',
                                 hintText: 'Username',
                                 initialValue: data['username'],
+                                restrictCharacters: true,
                                 controller: usernameController),
                             const SizedBox(height: 30),
                             _buildSubtitles('Display Name'),

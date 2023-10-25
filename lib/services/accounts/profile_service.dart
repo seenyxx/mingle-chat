@@ -27,13 +27,15 @@ class ProfileService extends ChangeNotifier {
         .set(userProfile.toMap(), SetOptions(merge: true));
   }
 
-  // TODO: Implement avatar url upload into database and retrieval from database
-
   Future<void> updateProfileAvatarUrL(String avatarUrl) async {
     await _firestore
         .collection('profiles')
         .doc(_firebaseAuth.currentUser!.uid)
         .set({'avatarUrl': avatarUrl}, SetOptions(merge: true));
+  }
+
+  String defaultAvatar() {
+    return _defaultAvatarUrl;
   }
 
   Future<String> getProfileAvatarUrl(String uid) async {

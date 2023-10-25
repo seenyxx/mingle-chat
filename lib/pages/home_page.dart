@@ -20,6 +20,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final ProfileService _profileService = ProfileService();
+  static const Color _skeletonColor = Color(0xFF21212F);
 
   // Sign user out
   void signOut() {
@@ -30,6 +31,12 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _profileService.dispose();
+    super.dispose();
   }
 
   @override
@@ -52,6 +59,7 @@ class _HomePageState extends State<HomePage> {
 
                     return CircleAvatar(
                       radius: 20,
+                      backgroundColor: _skeletonColor,
                       backgroundImage: NetworkImage(snapshot.data!),
                     );
                   })),
@@ -157,17 +165,38 @@ class _HomePageState extends State<HomePage> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const AvatarSkeleton(radius: 25);
                     }
-                    return const CircleAvatar(
+
+                    if (snapshot.data == null) {
+                      return const AvatarSkeleton(radius: 25);
+                    }
+
+                    return CircleAvatar(
                       radius: 25,
+                      backgroundColor: _skeletonColor,
+                      backgroundImage: NetworkImage(snapshot.data!),
                     );
                   }),
-              title: Text(profile['displayName']),
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(profile['displayName']),
+                  Text(
+                    '@${profile['username']}',
+                    style: const TextStyle(fontSize: 14, color: Colors.grey),
+                  )
+                ],
+              ),
               onTap: () {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => ChatPage(
-                              receiverUserEmail: data['displayName'],
+                              receiverUsername: profile['username'],
+                              receiverUserAvatarUrl:
+                                  profile.toString().contains('avatarUrl') == true
+                                      ? profile['avatarUrl']
+                                      : _profileService.defaultAvatar(),
+                              receiverUserDisplayName: profile['displayName'],
                               receiverUserID: data['uid'],
                             )));
               },
