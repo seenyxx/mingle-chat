@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:minglechat/models/user_profile.dart';
 
 String _defaultAvatarUrl =
-    'https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg';
+    'https://firebasestorage.googleapis.com/v0/b/realtalk-chat.appspot.com/o/defaultAvatar.png?alt=media&token=b0983ec4-4474-4cdd-b534-88924c2a8aa8';
 
 class ProfileService extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
