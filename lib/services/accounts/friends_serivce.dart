@@ -60,6 +60,32 @@ class FriendsService extends ChangeNotifier {
         .set({'friends': otherUserFriendsList}, SetOptions(merge: true));
   }
 
+  Future<void> removeFriend(String otherUserUid) async {
+    String currentUserUid = _firebaseAuth.currentUser!.uid;
+    List<String> otherUserFriendsList = await getFriendsList(otherUserUid);
+    List<String> currentFriendsList = await getFriendsList();
+
+    if (otherUserFriendsList.contains(currentUserUid)) {
+      otherUserFriendsList.remove(currentUserUid);
+    }
+
+    if (currentFriendsList.contains(otherUserUid)) {
+      currentFriendsList.remove(otherUserUid);
+    }
+
+    // Update current user friends list
+    await _firestore
+        .collection('friends')
+        .doc(currentUserUid)
+        .set({'friends': currentFriendsList}, SetOptions(merge: true));
+
+    // Update other user's friends list
+    await _firestore
+        .collection('friends')
+        .doc(otherUserUid)
+        .set({'friends': otherUserFriendsList}, SetOptions(merge: true));
+  }
+
   Future<List<String>> getFriendRequests([String? uid]) async {
     Map<String, dynamic>? friendData =
         (await getFriendData(uid ?? _firebaseAuth.currentUser!.uid)).data();
@@ -69,7 +95,7 @@ class FriendsService extends ChangeNotifier {
     }
 
     return friendData.toString().contains('friendRequests')
-        ? friendData['friendRequests']
+        ? List<String>.from(friendData['friendRequests'])
         : [];
   }
 
@@ -79,6 +105,11 @@ class FriendsService extends ChangeNotifier {
     if (currentFriendRequests.contains(otherUserUid)) {
       currentFriendRequests.remove(otherUserUid);
     }
+
+    await _firestore
+        .collection('friends')
+        .doc(uid ?? _firebaseAuth.currentUser!.uid)
+        .set({'friendRequests': currentFriendRequests}, SetOptions(merge: true));
   }
 
   Future<void> addFriendRequest(String otherUserUid, [String? uid]) async {
