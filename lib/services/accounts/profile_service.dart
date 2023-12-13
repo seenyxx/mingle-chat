@@ -52,6 +52,16 @@ class ProfileService extends ChangeNotifier {
     return _firestore.collection('profiles').doc(userId).get();
   }
 
+  Future<DocumentSnapshot<Map<String, dynamic>>> getUserProfileByUsername(
+      String username) async {
+    final QuerySnapshot<Map<String, dynamic>> result = await _firestore
+        .collection('profiles')
+        .where('username', isEqualTo: username)
+        .get();
+
+    return result.docs.first;
+  }
+
   Future<bool> isUsernameTaken(String username) async {
     final QuerySnapshot<Map<String, dynamic>> result = await _firestore
         .collection('profiles')

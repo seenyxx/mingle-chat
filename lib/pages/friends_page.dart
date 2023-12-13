@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:minglechat/components/avatar_skeleton.dart';
 import 'package:minglechat/components/dm_skeleton.dart';
+import 'package:minglechat/components/user_profile_text_field.dart';
 import 'package:minglechat/services/accounts/friends_serivce.dart';
 import 'package:minglechat/services/accounts/profile_service.dart';
 
@@ -48,7 +49,47 @@ class _FriendsPageState extends State<FriendsPage> {
           ),
           Container(
             padding: const EdgeInsets.symmetric(vertical: 10),
-            child: _buildFriendReqList(),
+            child: Column(
+              children: [
+                Expanded(child: _buildFriendReqList()),
+                Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    child: FriendReqInput(
+                      onSubmit: (friendReqController) async {
+                        bool userExist = await _profileService
+                            .isUsernameTaken(friendReqController.text.trim());
+                        if (!userExist) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                              content: Text('User does not exist'),
+                              backgroundColor: Colors.red,
+                            ));
+                          }
+                          return;
+                        }
+
+                        Map<String, dynamic> user =
+                            (await _profileService.getUserProfileByUsername(
+                                    friendReqController.text.trim()))
+                                .data() as Map<String, dynamic>;
+
+                        String otherUid = user['uid'];
+
+                        await _friendsService.addCurrentUserToOtherFriendReqs(otherUid);
+
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(
+                                "Sent a friend request to @${friendReqController.text.trim()}"),
+                            backgroundColor: Colors.green,
+                          ));
+                        }
+
+                        friendReqController.clear();
+                      },
+                    )),
+              ],
+            ),
           ),
         ]),
       ),
@@ -79,7 +120,7 @@ class _FriendsPageState extends State<FriendsPage> {
                 ),
                 Text(
                   'No friends to show',
-                  style: TextStyle(fontSize: 18),
+                  style: TextStyle(fontSize: 22),
                 ),
               ],
             ));
@@ -185,7 +226,7 @@ class _FriendsPageState extends State<FriendsPage> {
                 ),
                 Text(
                   'No friend requests to show',
-                  style: TextStyle(fontSize: 18),
+                  style: TextStyle(fontSize: 22),
                 ),
               ],
             ));
@@ -286,5 +327,54 @@ class _FriendsPageState extends State<FriendsPage> {
                 ],
               ));
         });
+  }
+}
+
+class FriendReqInput extends StatefulWidget {
+  final Function(TextEditingController) onSubmit;
+  const FriendReqInput({super.key, required this.onSubmit});
+
+  @override
+  State<FriendReqInput> createState() => _FriendReqInputState();
+}
+
+class _FriendReqInputState extends State<FriendReqInput> {
+  final TextEditingController _friendReqController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return UserProfileTextField(
+      hintText: 'Send friend request',
+      initialValue: '',
+      controller: _friendReqController,
+      prefixText: '@',
+      onStart: () {},
+      onChanged: (text) {
+        setState(() {});
+      },
+      setStateOnChange: false,
+      suffixIcon: Padding(
+        padding: const EdgeInsets.only(right: 10),
+        child: CircleAvatar(
+          radius: 5,
+          backgroundColor:
+              _friendReqController.text.trim().isEmpty ? Colors.transparent : Colors.blue,
+          child: IconButton(
+            focusColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            splashColor: Colors.transparent,
+            onPressed: () async {
+              if (_friendReqController.text.trim().isEmpty) {
+                return;
+              }
+              await widget.onSubmit(_friendReqController);
+              setState(() {});
+            },
+            icon: const Icon(Icons.person_add),
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
   }
 }

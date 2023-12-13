@@ -118,6 +118,25 @@ class FriendsService extends ChangeNotifier {
     if (!currentFriendRequests.contains(otherUserUid)) {
       currentFriendRequests.add(otherUserUid);
     }
+
+    await _firestore
+        .collection('friends')
+        .doc(uid ?? _firebaseAuth.currentUser!.uid)
+        .set({'friendRequests': currentFriendRequests}, SetOptions(merge: true));
+  }
+
+  Future<void> addCurrentUserToOtherFriendReqs(String otherUserUid) async {
+    List<String> friendReqs = await getFriendRequests(otherUserUid);
+    String uid = _firebaseAuth.currentUser!.uid;
+
+    if (!friendReqs.contains(uid)) {
+      friendReqs.add(uid);
+    }
+
+    await _firestore
+        .collection('friends')
+        .doc(otherUserUid)
+        .set({'friendRequests': friendReqs}, SetOptions(merge: true));
   }
 
   // Future<List<String>> getActiveChatRooms([String? uid]) async {
