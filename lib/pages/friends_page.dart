@@ -122,6 +122,9 @@ class _FriendsPageState extends State<FriendsPage> {
                   'No friends to show',
                   style: TextStyle(fontSize: 22),
                 ),
+                SizedBox(
+                  height: 80,
+                )
               ],
             ));
           }
